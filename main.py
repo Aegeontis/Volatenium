@@ -18,8 +18,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.generate_graph:
-        logger.info("Generating graphs...")
-        generate_graph()
+        # read algo name and exchange name from cli
+        algorithm_name = input("Enter algorithm name: ")
+        exchange_name = input("Enter exchange name: ")
+        logger.info(f"Generating graphs for {algorithm_name} on {exchange_name}")
+        generate_graph(algorithm_name, exchange_name)
         logger.info("Graphs generated. Exiting...")
         exit()
 

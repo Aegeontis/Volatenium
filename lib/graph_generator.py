@@ -4,11 +4,17 @@ from datetime import datetime
 import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
 
+from lib.logger import logger
 
-def generate_graph():
+
+def generate_graph(algorithm_name: str, exchange_name: str):
     # Prepare data for plotting
     with open("cache/history.json", "r") as f:
-        data = json.load(f)
+        data = json.load(f)[algorithm_name][exchange_name]
+
+    if data is None:
+        logger.error(f"No data found for {algorithm_name} on {exchange_name}.")
+        return
 
     # Convert UNIX timestamps to datetime and then to matplotlib date format
     timestamps = [mdates.date2num(datetime.fromtimestamp(item["unix_timestamp"])) for item in data]
@@ -41,6 +47,8 @@ def generate_graph():
     ax.set_ylabel("Crypto Price")
     plt.xticks(rotation=45)
     ax.legend()
+    # add title
+    ax.set_title(f"{algorithm_name} on {exchange_name}")
 
     # Save the graph as an SVG file at the specified path
     plt.tight_layout()
