@@ -2,7 +2,7 @@
 
 A simple algorithm-based python crypto trader
 
-# Installation
+## Installation
 
 1. Download the repo with either:
     * git:
@@ -30,7 +30,7 @@ A simple algorithm-based python crypto trader
 }
 ```
 
-# Usage
+## Usage
 
 ##### Normal usage
 
