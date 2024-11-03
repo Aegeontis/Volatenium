@@ -21,7 +21,7 @@ A simple algorithm-based python crypto trader
 {
   "enabled_algorithms": [
     {
-      "name": "safe_sale",
+      "name": "safe_trade",
       "enabled_exchanges": [
         "simulator"
       ]

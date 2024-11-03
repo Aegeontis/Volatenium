@@ -5,9 +5,7 @@ from lib.exchange_interface import ExchangeInterface
 from lib.logger import logger, float_to_human_readable
 
 
-class SafeSale(AlgorithmInterface):
-    codename = "safe_sale"
-
+class SafeTrade(AlgorithmInterface):
     exchange: ExchangeInterface
     last_bought_price: float
     last_sold_price: float
