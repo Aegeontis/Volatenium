@@ -32,14 +32,20 @@ def float_to_human_readable(number: float):
     return np.format_float_positional(number, trim='-')
 
 
-def log_action(action_report: dict):
-    history = []
+def log_action(action_report: dict, algorithm_name: str, exchange_name: str):
+    history = {}
+
     if not os.path.exists("cache"):
         os.makedirs("cache")
     if os.path.exists("cache/history.json"):
         with open("cache/history.json", "r") as f:
             history = json.load(f)
-    history.append({
+
+    if algorithm_name not in history:
+        history[algorithm_name] = {}
+    if exchange_name not in history[algorithm_name]:
+        history[algorithm_name][exchange_name] = []
+    history[algorithm_name][exchange_name].append({
         "unix_timestamp": action_report["unix_timestamp"],
         "action": action_report["action"],
         "action-result": action_report["action_result"],
@@ -48,6 +54,7 @@ def log_action(action_report: dict):
         "crypto-wallet": action_report["wallet_crypto_amount"],
         "fiat-wallet": action_report["wallet_fiat_amount"]
     })
+
     with open("cache/history.json", "w") as f:
         json.dump(history, f, indent=4)
 

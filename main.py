@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
             for future in as_completed(futures):
                 algorithm = futures[future]
-                log_action(future.result())
+                log_action(future.result(), algorithm.codename, algorithm.exchange.codename)
                 variables[algorithm.codename] = {
                     "algorithm_vars": algorithm.get_current_vars(),
                     "exchange_vars": algorithm.exchange.get_current_vars()
