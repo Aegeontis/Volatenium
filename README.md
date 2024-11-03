@@ -5,8 +5,13 @@ A simple algorithm-based python crypto trader
 # Installation
 
 1. Download the repo with either:
-    * git: `git clone https://github.com/Aegeontis/Volatenium.git`
-    * as zip: https://github.com/Aegeontis/Volatenium/archive/main.zip
+    * git:
+        1. `git clone https://github.com/Aegeontis/Volatenium.git`
+        2. `cd Volatenium`
+    * as zip:
+        1. Download https://github.com/Aegeontis/Volatenium/archive/refs/heads/main.zip
+        2. `unzip Volatenium-main.zip`
+        3. `cd Volatenium-main`
 2. Initiate a python venv: `python -m venv venv`
 3. Enter the python venv: `source venv/bin/activate`
 4. Install requirements: `pip install -r requirements.txt`
