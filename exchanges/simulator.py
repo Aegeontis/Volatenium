@@ -11,6 +11,7 @@ class Simulator(ExchangeInterface):
     _wallet_fiat_amount: float
 
     def __init__(self, cached_vars=None):
+        super().__init__()
         if cached_vars is None:
             logger.warning("No cached vars provided, using BTC-EUR as crypto_codename, 0.001 as exchange_fee, "
                            "assuming empty crypto wallet and 100.0 in fiat wallet")

@@ -3,12 +3,14 @@ from typing import Tuple
 
 
 class ExchangeInterface(ABC):
+    codename: str
+
     exchange_fee: float
     crypto_codename: str
 
     @abstractmethod
     def __init__(self, cached_vars: dict = None):
-        pass
+        self.codename = self.__class__.__name__
 
     @abstractmethod
     def get_current_vars(self) -> dict:
