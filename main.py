@@ -2,6 +2,7 @@
 
 import importlib
 import argparse
+import re as regex
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -36,15 +37,17 @@ if __name__ == '__main__':
     algorithms = []
     for algorithm in settings["enabled_algorithms"]:
         # Import the algorithm module
-        module = importlib.import_module(f"algorithms.{algorithm["name"]}")
+        module = importlib.import_module(
+            f"algorithms.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', algorithm["name"]).lower()}")
         # Get the class defined in the module
-        algorithm_class = getattr(module, ''.join(word.title() for word in algorithm["name"].split('_')))
+        algorithm_class = getattr(module, algorithm["name"])
         # Create a separate object for each enabled exchange for this algorithm
         for exchange_name in algorithm["enabled_exchanges"]:
             # Import the exchange module
-            module = importlib.import_module(f"exchanges.{exchange_name}")
+            module = importlib.import_module(
+                f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange_name).lower()}")
             # Get the class defined in the module
-            exchange_class = getattr(module, ''.join(word.title() for word in exchange_name.split('_')))
+            exchange_class = getattr(module, exchange_name)
             # Instantiate both the algorithm and the exchange and add it to the list
             algorithms.append(
                 algorithm_class(exchange_class(cached_vars.get(algorithm["name"], {}).get("exchange_vars", None)),
