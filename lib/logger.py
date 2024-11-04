@@ -58,6 +58,9 @@ def log_action(action_report: dict, algorithm_name: str, exchange_name: str):
 
     with open("cache/history.json", "w") as f:
         json.dump(history, f, indent=4)
+        # immediately write to disk
+        f.flush()
+        os.fsync(f.fileno())
 
 
 def read_settings() -> dict:
@@ -81,6 +84,9 @@ def store_variables(variables: dict):
         os.makedirs("cache")
     with open("cache/variables.json", "w") as f:
         json.dump(variables, f, indent=4)
+        # immediately write to disk
+        f.flush()
+        os.fsync(f.fileno())
 
 
 def read_variables() -> dict:
