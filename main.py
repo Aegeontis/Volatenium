@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
-import importlib
 import argparse
+import importlib
 import re as regex
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from lib.logger import *
 from lib.graph_generator import generate_graph
+from lib.logger import *
 
 if __name__ == '__main__':
     logger.info("Starting script")
