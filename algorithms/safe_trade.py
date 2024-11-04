@@ -47,13 +47,15 @@ class SafeTrade(AlgorithmInterface):
 
     def perform_action(self) -> dict:
         current_price = self.exchange.get_current_price()
-        logger.debug(f"{self.codename}: Current price for {self.exchange.crypto_codename}: {float_to_human_readable(current_price)}")
+        logger.debug(
+            f"{self.codename}: Current price for {self.exchange.crypto_codename}: {float_to_human_readable(current_price)}")
         result = {
             "action": "hold",
             "action_result": None,
             "transacted_amount": None,
         }
-        if current_price * (1 - self.exchange.exchange_fee * 2) > self.last_bought_price and self.wallet_crypto_amount != 0:
+        if current_price * (
+                1 - self.exchange.exchange_fee * 2) > self.last_bought_price and self.wallet_crypto_amount != 0:
             expected_fiat_amount: float = current_price * self.wallet_crypto_amount * (1 - self.exchange.exchange_fee)
             # sell entire crypto wallet
             result = self.perform_crypto_sale(self.wallet_crypto_amount, expected_fiat_amount)
