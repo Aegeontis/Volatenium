@@ -70,10 +70,15 @@ if __name__ == '__main__':
             for future in as_completed(futures):
                 algorithm = futures[future]
                 log_action(future.result(), algorithm.codename, algorithm.exchange.codename)
-                variables[algorithm.codename] = {
-                    "algorithm_vars": algorithm.get_current_vars(),
-                    "exchange_vars": algorithm.exchange.get_current_vars()
-                }
+
+                # make sure the dict exists
+                if algorithm.codename not in variables:
+                    variables[algorithm.codename] = []
+
+                variables[algorithm.codename].append({
+                    algorithm.exchange.codename: algorithm.exchange.get_current_vars(),
+                    "algorithm_vars": algorithm.get_current_vars()
+                })
 
         # store variables
         store_variables(variables)
