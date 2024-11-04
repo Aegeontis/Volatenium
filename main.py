@@ -36,13 +36,17 @@ if __name__ == '__main__':
     logger.info("Initiating algorithms")
     algorithms = []
     for algorithm in settings["enabled_algorithms"]:
+        logger.info(f"Initializing {algorithm['name']}")
         # Import the algorithm module
         module = importlib.import_module(
             f"algorithms.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', algorithm["name"]).lower()}")
         # Get the class defined in the module
         algorithm_class = getattr(module, algorithm["name"])
         # Create a separate object for each enabled exchange for this algorithm
-        for exchange_name in algorithm["enabled_exchanges"]:
+        for exchange in algorithm["enabled_exchanges"]:
+            logger.info(f"Initializing {algorithm['name']} on {next(iter(exchange))}")
+            # use first key as exchange name
+            exchange_name = next(iter(exchange))
             # Import the exchange module
             module = importlib.import_module(
                 f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange_name).lower()}")
@@ -50,7 +54,7 @@ if __name__ == '__main__':
             exchange_class = getattr(module, exchange_name)
             # Instantiate both the algorithm and the exchange and add it to the list
             algorithms.append(
-                algorithm_class(exchange_class(cached_vars.get(algorithm["name"], {}).get("exchange_vars", None)),
+                algorithm_class(exchange_class(exchange.get(exchange_name, None)),
                                 cached_vars.get(algorithm["name"], {}).get("algorithm_vars", None)))
 
     logger.info("Starting main loop")
