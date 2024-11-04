@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 algorithm_class(exchange_class(exchange.get(exchange_name, None)),
                                 cached_vars.get(algorithm["name"], {}).get("algorithm_vars", None)))
 
-    logger.info("Starting main loop")
+    logger.info(f"Starting main loop with {len(algorithms)} algorithms")
     # TODO: Add setting for loop speed for each algorithm and start separate loops
     while True:
         logger.debug(f"Performing actions...")
