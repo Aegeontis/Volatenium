@@ -47,7 +47,7 @@ class SafeTrade(AlgorithmInterface):
 
     def perform_action(self) -> dict:
         current_price = self.exchange.get_current_price()
-        logger.debug(f"{self.codename}: Current price: {float_to_human_readable(current_price)}")
+        logger.debug(f"{self.codename}: Current price for {self.exchange.crypto_codename}: {float_to_human_readable(current_price)}")
         result = {
             "action": "hold",
             "action_result": None,
@@ -69,7 +69,7 @@ class SafeTrade(AlgorithmInterface):
             if result["action_result"] != "failure":
                 self.last_bought_price = current_price
         else:
-            logger.debug(f"{self.codename}: Performing no action")
+            logger.debug(f"{self.codename}: Performing no action for {self.exchange.crypto_codename}")
 
         result["wallet_fiat_amount"] = self.wallet_fiat_amount
         result["wallet_crypto_amount"] = self.wallet_crypto_amount
