@@ -51,6 +51,8 @@ class AlgorithmInterface(ABC):
             "transacted_amount": None
         }
         # perform sale on the exchange
+        logger.debug(f"{self.codename}: Selling {crypto_to_sell_amount} {self.exchange.crypto_codename} "
+                     f"for {expected_fiat_amount} fiat")
         action_success, received_fiat = self.exchange.sell_crypto(crypto_to_sell_amount)
 
         # evaluate sale results
@@ -94,6 +96,8 @@ class AlgorithmInterface(ABC):
         }
 
         # perform purchase on the exchange
+        logger.debug(f"{self.codename}: Purchasing {expected_crypto_amount} {self.exchange.crypto_codename} "
+                     f"for {fiat_to_spend_amount} fiat")
         action_success, bought_amount = self.exchange.buy_crypto(fiat_to_spend_amount)
 
         # evaluate purchase results
