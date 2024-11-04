@@ -135,6 +135,7 @@ class AlgorithmInterface(ABC):
                 "wallet_crypto_amount": float,  # Crypto that is currently in the exchange wallet
                 "current_price": float # Reported market price at time of action
                 "unix_timestamp": int # The current unix timestamp
+                "crypto_price": float # Crypto codename
             }
         """
         pass

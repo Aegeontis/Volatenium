@@ -47,6 +47,7 @@ def log_action(action_report: dict, algorithm_name: str, exchange_name: str):
         history[algorithm_name][exchange_name] = []
     history[algorithm_name][exchange_name].append({
         "unix_timestamp": action_report["unix_timestamp"],
+        "crypto_codename": action_report["crypto_codename"],
         "action": action_report["action"],
         "action-result": action_report["action_result"],
         "transacted_amount": action_report["transacted_amount"],

@@ -75,5 +75,6 @@ class SafeTrade(AlgorithmInterface):
         result["wallet_crypto_amount"] = self.wallet_crypto_amount
         result["current_price"] = current_price
         result["unix_timestamp"] = datetime.now().timestamp()
+        result["crypto_codename"] = self.exchange.crypto_codename
 
         return result
