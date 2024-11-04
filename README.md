@@ -23,7 +23,22 @@ A simple algorithm-based python crypto trader
     {
       "name": "SafeTrade",
       "enabled_exchanges": [
-        "Simulator"
+        {
+          "Simulator": {
+            "crypto_codename": "BTC-EUR",
+            "exchange_fee": 0.001,
+            "wallet_crypto_amount": 0,
+            "wallet_fiat_amount": 100.0
+          }
+        },
+        {
+          "Simulator": {
+            "crypto_codename": "SHIB-EUR",
+            "exchange_fee": 0.001,
+            "wallet_crypto_amount": 0,
+            "wallet_fiat_amount": 100.0
+          }
+        }
       ]
     }
   ]
