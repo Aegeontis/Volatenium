@@ -45,8 +45,8 @@ class Simulator(ExchangeInterface):
 
     def get_current_price(self) -> float:
         # get current price from yahoo
-        yahoo_dat = urllib.request.urlopen("https://query1.finance.yahoo.com/v8/finance/chart/SHIB-EUR").read().decode(
-            'utf-8')
+        yahoo_dat = (urllib.request.urlopen(f"https://query1.finance.yahoo.com/v8/finance/chart/{self.crypto_codename}")
+                     .read().decode("utf-8"))
         result_dictionary = json.loads(yahoo_dat)
         return result_dictionary["chart"]["result"][0]["meta"]["regularMarketPrice"]
 
