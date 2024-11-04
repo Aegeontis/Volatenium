@@ -29,7 +29,8 @@ A simple algorithm-based python crypto trader
             "exchange_fee": 0.001,
             "wallet_crypto_amount": 0,
             "wallet_fiat_amount": 100.0
-          }
+          },
+          "algorithm_vars": {},
         },
         {
           "Simulator": {
@@ -37,7 +38,8 @@ A simple algorithm-based python crypto trader
             "exchange_fee": 0.001,
             "wallet_crypto_amount": 0,
             "wallet_fiat_amount": 100.0
-          }
+          },
+          "algorithm_vars": {}
         }
       ]
     }
