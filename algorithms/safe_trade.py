@@ -12,8 +12,8 @@ class SafeTrade(AlgorithmInterface):
     wallet_crypto_amount: float
     wallet_fiat_amount: float
 
-    def __init__(self, exchange: ExchangeInterface, cached_vars: dict):
-        super().__init__(exchange, cached_vars)
+    def __init__(self, exchange: ExchangeInterface, index_in_list: int, cached_vars: dict):
+        super().__init__(exchange, index_in_list, cached_vars)
 
     def get_current_vars(self) -> dict:
         return {
