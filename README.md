@@ -15,36 +15,24 @@ A simple algorithm-based python crypto trader
 2. Initiate a python venv: `python -m venv venv`
 3. Enter the python venv: `source venv/bin/activate`
 4. Install requirements: `pip install -r requirements.txt`
-5. Create a settings.json file. Example below:
-
+5. Create a settings.yaml file. **MAKE SURE to increment the indexes**. Example below:
 ```
-{
-  "enabled_algorithms": [
-    {
-      "name": "SafeTrade",
-      "enabled_exchanges": [
-        {
-          "Simulator": {
-            "crypto_codename": "BTC-EUR",
-            "exchange_fee": 0.001,
-            "wallet_crypto_amount": 0,
-            "wallet_fiat_amount": 100.0
-          },
-          "algorithm_vars": {},
-        },
-        {
-          "Simulator": {
-            "crypto_codename": "SHIB-EUR",
-            "exchange_fee": 0.001,
-            "wallet_crypto_amount": 0,
-            "wallet_fiat_amount": 100.0
-          },
-          "algorithm_vars": {}
-        }
-      ]
-    }
-  ]
-}
+general_settings:
+  action_interval: 60.0
+exchanges:
+  Simulator:
+    exchange_settings:
+    algorithms:
+      - index: 0
+        codename: "SafeTrade"
+        algorithm_vars:
+          wallet_crypto_amount: 0.0
+          wallet_fiat_amount: 100.0
+        exchange_vars:
+          crypto_codename: "BTC-EUR"
+          exchange_fee: 0.0001
+          wallet_crypto_amount: 0.0
+          wallet_fiat_amount: 100.0
 ```
 
 ## Usage

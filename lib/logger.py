@@ -6,6 +6,7 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 import numpy as np
+import yaml
 
 
 class CustomFormatter(logging.Formatter):
@@ -65,25 +66,25 @@ def log_action(action_report: dict, algorithm_name: str, exchange_name: str):
 
 def read_settings() -> dict:
     settings: dict = {}
-    if os.path.exists("settings.json"):
-        with open("settings.json", "r") as f:
-            settings = json.load(f)
+    if os.path.exists("settings.yaml"):
+        with open("settings.yaml", "r") as f:
+            settings = yaml.safe_load(f)
     else:
-        logger.error("settings.json not found. See README for more details. Exiting...")
+        logger.error("settings.yaml not found. See README for more details. Exiting...")
         sys.exit(1)
     return settings
 
 
 def store_settings(settings: dict):
-    with open("settings.json", "w") as f:
-        json.dump(settings, f, indent=4)
+    with open("settings.yaml", "w") as f:
+        yaml.safe_dump(settings, f, indent=2)
 
 
 def store_variables(variables: dict):
     if not os.path.exists("cache"):
         os.makedirs("cache")
-    with open("cache/variables.json", "w") as f:
-        json.dump(variables, f, indent=4)
+    with open("cache/variables.yaml", "w") as f:
+        yaml.safe_dump(variables, f, indent=2)
         # immediately write to disk
         f.flush()
         os.fsync(f.fileno())
@@ -91,9 +92,9 @@ def store_variables(variables: dict):
 
 def read_variables() -> dict:
     cached_vars = {}
-    if os.path.exists("cache/variables.json"):
-        with open("cache/variables.json", "r") as f:
-            cached_vars = json.load(f)
+    if os.path.exists("cache/variables.yaml"):
+        with open("cache/variables.yaml", "r") as f:
+            cached_vars = yaml.safe_load(f)
     return cached_vars
 
 
