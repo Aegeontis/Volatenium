@@ -41,54 +41,83 @@ if __name__ == '__main__':
     cached_vars = read_variables()
 
     logger.info("Initiating algorithms")
-    algorithms = []
-    for algorithm in settings["enabled_algorithms"]:
-        logger.info(f"Initializing {algorithm['name']}")
-        # Import the algorithm module
-        module = importlib.import_module(
-            f"algorithms.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', algorithm["name"]).lower()}")
-        # Get the class defined in the module
-        algorithm_class = getattr(module, algorithm["name"])
-        # Create a separate object for each enabled exchange for this algorithm
-        for exchange in algorithm["enabled_exchanges"]:
-            logger.info(f"Initializing {algorithm['name']} on {next(iter(exchange))}")
-            # use first key as exchange name
-            exchange_name = next(iter(exchange))
-            # Import the exchange module
-            module = importlib.import_module(
-                f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange_name).lower()}")
-            # Get the class defined in the module
-            exchange_class = getattr(module, exchange_name)
-            # Instantiate both the algorithm and the exchange and add it to the list
-            algorithms.append(
-                algorithm_class(exchange_class(exchange.get(exchange_name, None)),
-                                cached_vars.get(algorithm["name"], {}).get("algorithm_vars", None)))
+    jobs = []
+    for exchange in settings["exchanges"]:
+        logger.info(f"Initializing exchange: {exchange}")
 
-    logger.info(f"Starting main loop with {len(algorithms)} algorithms")
-    # TODO: Add setting for loop speed for each algorithm and start separate loops
+        # load the cached values for this algorithm
+        if exchange not in cached_vars:
+            cached_vars[exchange] = {}
+
+        # Import the exchange class
+        exchange_module = importlib.import_module(
+            f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange).lower()}")
+        exchange_class = getattr(exchange_module, exchange)
+        for algorithm in settings["exchanges"][exchange]["algorithms"]:
+            algorithm_name = algorithm["codename"]
+            logger.info(f"Initializing {algorithm_name} on {exchange}")
+            # Import the algorithm class
+            algo_module = importlib.import_module(
+                f"algorithms.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', algorithm_name).lower()}")
+            algorithm_class = getattr(algo_module, algorithm_name)
+
+            # use cached values if they exist, otherwise use values from settings
+            algorithm_vars = None
+            exchange_vars = None
+            if cached_vars.get("exchanges", {}).get(exchange, {}) != {}:
+                exchange_vars = next(
+                    (entry for entry in cached_vars["exchanges"][exchange]["algorithms"] if
+                     entry["index"] == algorithm["index"]),
+                    {}).get("exchange_vars", None)
+                algorithm_vars = next(
+                    (entry for entry in cached_vars["exchanges"][exchange]["algorithms"] if
+                     entry["index"] == algorithm["index"]),
+                    {}).get("algorithm_vars", None)
+            if algorithm_vars is None or algorithm_vars == {}:
+                algorithm_vars = algorithm.get("algorithm_vars", None)
+            if exchange_vars is None or exchange_vars == {}:
+                exchange_vars = algorithm.get("exchange_vars", None)
+
+            # Create a separate object for each enabled exchange for this algorithm
+            jobs.append(algorithm_class(exchange_class(exchange_vars), algorithm["index"], algorithm_vars))
+
+    logger.info(f"Starting main loop with {len(jobs)} jobs and {action_interval} seconds between actions")
     while True:
-        logger.debug(f"Performing actions...")
-        variables = {}
+        logger.info(f"Performing actions...")
+        state_vars = {
+            "exchanges": {}
+        }
         # Execute all algorithms at the same time
         with ThreadPoolExecutor() as executor:
-            futures = {executor.submit(algorithm.perform_action): algorithm for
-                       algorithm in algorithms}
+            futures = {executor.submit(algorithm.perform_action): algorithm for algorithm in jobs}
 
             for future in as_completed(futures):
                 algorithm = futures[future]
                 log_action(future.result(), algorithm.codename, algorithm.exchange.codename)
 
-                # make sure the dict exists
-                if algorithm.codename not in variables:
-                    variables[algorithm.codename] = []
-
-                variables[algorithm.codename].append({
-                    algorithm.exchange.codename: algorithm.exchange.get_current_vars(),
-                    "algorithm_vars": algorithm.get_current_vars()
-                })
+                exchange_exists = False
+                for exchange in state_vars["exchanges"]:
+                    if algorithm.exchange.codename == exchange:
+                        exchange_exists = True
+                        state_vars["exchanges"][exchange]["algorithms"].append({
+                            "index": algorithm.index_in_list,
+                            "codename": algorithm.codename,
+                            "algorithm_vars": algorithm.get_current_vars(),
+                            "exchange_vars": algorithm.exchange.get_current_vars()
+                        })
+                    break
+                if not exchange_exists:
+                    state_vars["exchanges"][algorithm.exchange.codename] = {
+                        "algorithms": [{
+                            "index": algorithm.index_in_list,
+                            "codename": algorithm.codename,
+                            "algorithm_vars": algorithm.get_current_vars(),
+                            "exchange_vars": algorithm.exchange.get_current_vars()
+                        }]
+                    }
 
         # store variables
-        store_variables(variables)
+        store_variables(state_vars)
 
         # wait until the next minute
         wait_time = action_interval - time.localtime().tm_sec
