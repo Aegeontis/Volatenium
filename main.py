@@ -30,6 +30,13 @@ if __name__ == '__main__':
     logger.info("Reading settings")
     settings = read_settings()
 
+    action_interval = (settings.get("general_settings", {}) or {}).get("action_interval", None)
+    if action_interval is None:
+        logger.warning("action_interval not set, using 60 seconds as default")
+        action_interval = 60
+    else:
+        logger.info(f"action_interval set to {action_interval} seconds")
+
     logger.info("Reading cached variables")
     cached_vars = read_variables()
 
@@ -84,6 +91,6 @@ if __name__ == '__main__':
         store_variables(variables)
 
         # wait until the next minute
-        wait_time = 60 - time.localtime().tm_sec
-        logger.debug(f"Sleeping until next minute ({wait_time}s)")
+        wait_time = action_interval - time.localtime().tm_sec
+        logger.info(f"Sleeping until next minute ({wait_time}s)")
         time.sleep(wait_time)
