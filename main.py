@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
             for future in as_completed(futures):
                 algorithm = futures[future]
-                log_action(future.result(), algorithm.codename, algorithm.exchange.codename)
+                log_action(future.result(),algorithm.exchange.codename, algorithm.codename)
 
                 exchange_exists = False
                 for exchange in state_vars["exchanges"]:
