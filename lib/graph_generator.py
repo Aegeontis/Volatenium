@@ -60,4 +60,5 @@ def generate_graph(algorithm_name: str, exchange_name: str, crypto_codename: str
     # Save the graph as an SVG file at the specified path
     plt.tight_layout()
     plt.savefig("cache/graph.svg", format="svg")
+    logger.info(f"Graph saved at cache/graph.svg")
     plt.close()
