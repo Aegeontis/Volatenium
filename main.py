@@ -54,6 +54,7 @@ if __name__ == '__main__':
         exchange_module = importlib.import_module(
             f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange).lower()}")
         exchange_class = getattr(exchange_module, exchange)
+        initialized_indexes = []
         for algorithm in settings["exchanges"][exchange]["algorithms"]:
             algorithm_name = algorithm["codename"]
             logger.info(f"Initializing {algorithm_name} on {exchange}")
@@ -66,6 +67,12 @@ if __name__ == '__main__':
             algorithm_vars = None
             exchange_vars = None
             if cached_vars.get("exchanges", {}).get(exchange, {}) != {}:
+                if initialized_indexes.__contains__(algorithm["index"]):
+                    logger.error(f"Duplicate algorithm index found for {algorithm_name} on {exchange}. Duplicate index: {algorithm['index']}")
+                    logger.error("Duplicate indexes can lead to data loss and unexpected behavior.")
+                    logger.critical("Exiting...")
+                    exit(1)
+                initialized_indexes.append(algorithm["index"])
                 exchange_vars = next(
                     (entry for entry in cached_vars["exchanges"][exchange]["algorithms"] if
                      entry["index"] == algorithm["index"]),
