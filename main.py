@@ -24,7 +24,7 @@ if __name__ == '__main__':
         algorithm_name = input("Enter algorithm name: ")
         crypto_codename = input("Enter crypto code name (e.g. BTC-EUR): ")
         logger.info(f"Generating graphs for {algorithm_name} on {exchange_name}")
-        generate_graph(algorithm_name, exchange_name)
+        generate_graph(algorithm_name, exchange_name, crypto_codename)
         logger.info("Graphs generated. Exiting...")
         exit()
 
