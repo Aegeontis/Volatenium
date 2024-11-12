@@ -20,8 +20,9 @@ if __name__ == '__main__':
 
     if args.generate_graph:
         # read algo name and exchange name from cli
-        algorithm_name = input("Enter algorithm name: ")
         exchange_name = input("Enter exchange name: ")
+        algorithm_name = input("Enter algorithm name: ")
+        crypto_codename = input("Enter crypto code name (e.g. BTC-EUR): ")
         logger.info(f"Generating graphs for {algorithm_name} on {exchange_name}")
         generate_graph(algorithm_name, exchange_name)
         logger.info("Graphs generated. Exiting...")
