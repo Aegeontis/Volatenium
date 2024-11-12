@@ -43,7 +43,7 @@ def generate_graph(algorithm_name: str, exchange_name: str, crypto_codename: str
     # Plot buy, sell, and hold actions
     ax.scatter(buy_x, buy_y, c="red", s=20, label="Buy")
     ax.scatter(sell_x, sell_y, c="green", s=20, label="Sell")
-    ax.scatter(hold_x, hold_y, c="blue", s=0.5, label="Hold")
+    ax.scatter(hold_x, hold_y, c="blue", s=20, label="Hold")
 
     # Format x-axis as date and y-axis as human-readable numbers
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d %H:%M"))
