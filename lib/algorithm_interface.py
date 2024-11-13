@@ -6,16 +6,16 @@ from lib.logger import logger
 
 class AlgorithmInterface(ABC):
     codename: str
-    index_in_list: int
+    id_in_list: str
     wallet_fiat_amount: float
     wallet_crypto_amount: float
 
-    def __init__(self, exchange: ExchangeInterface, index_in_list: int, cached_vars=None):
+    def __init__(self, exchange: ExchangeInterface, id_in_list: str, cached_vars=None):
         if cached_vars is None:
             cached_vars = {}
         self.exchange = exchange
         self.codename = self.__class__.__name__
-        self.index_in_list = index_in_list
+        self.id_in_list = id_in_list
         self.set_current_vars(cached_vars)
 
     @abstractmethod
@@ -137,7 +137,7 @@ class AlgorithmInterface(ABC):
                 "wallet_crypto_amount": float,  # Crypto that is currently in the exchange wallet
                 "current_price": float # Reported market price at time of action
                 "unix_timestamp": int # The current unix timestamp
-                "crypto_price": float # Crypto codename
+                "id": str # id of the algorithm
             }
         """
         pass

@@ -22,9 +22,9 @@ if __name__ == '__main__':
         # read algo name and exchange name from cli
         exchange_name = input("Enter exchange name: ")
         algorithm_name = input("Enter algorithm name: ")
-        crypto_codename = input("Enter crypto code name (e.g. BTC-EUR): ")
+        algo_id = input("Enter algorithm id (check settings.yaml): ")
         logger.info(f"Generating graphs for {algorithm_name} on {exchange_name}")
-        generate_graph(algorithm_name, exchange_name, crypto_codename)
+        generate_graph(algorithm_name, exchange_name, algo_id)
         logger.info("Graphs generated. Exiting...")
         exit()
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         exchange_module = importlib.import_module(
             f"exchanges.{regex.sub(r'([a-z])([A-Z])', r'\1_\2', exchange).lower()}")
         exchange_class = getattr(exchange_module, exchange)
-        initialized_indexes = []
+        initialized_ids = []
         for algorithm in settings["exchanges"][exchange]["algorithms"]:
             algorithm_name = algorithm["codename"]
             logger.info(f"Initializing {algorithm_name} on {exchange}")
@@ -67,19 +67,20 @@ if __name__ == '__main__':
             algorithm_vars = None
             exchange_vars = None
             if cached_vars.get("exchanges", {}).get(exchange, {}) != {}:
-                if initialized_indexes.__contains__(algorithm["index"]):
-                    logger.error(f"Duplicate algorithm index found for {algorithm_name} on {exchange}. Duplicate index: {algorithm['index']}")
-                    logger.error("Duplicate indexes can lead to data loss and unexpected behavior.")
+                if initialized_ids.__contains__(algorithm["id"]):
+                    logger.error(
+                        f"Duplicate algorithm id found for {algorithm_name} on {exchange}. Duplicate id: {algorithm["id"]}")
+                    logger.error("Duplicate ids can lead to data loss and unexpected behavior.")
                     logger.critical("Exiting...")
                     exit(1)
-                initialized_indexes.append(algorithm["index"])
+                initialized_ids.append(algorithm["id"])
                 exchange_vars = next(
                     (entry for entry in cached_vars["exchanges"][exchange]["algorithms"] if
-                     entry["index"] == algorithm["index"]),
+                     entry["id"] == algorithm["id"]),
                     {}).get("exchange_vars", None)
                 algorithm_vars = next(
                     (entry for entry in cached_vars["exchanges"][exchange]["algorithms"] if
-                     entry["index"] == algorithm["index"]),
+                     entry["id"] == algorithm["id"]),
                     {}).get("algorithm_vars", None)
             if algorithm_vars is None or algorithm_vars == {}:
                 algorithm_vars = algorithm.get("algorithm_vars", None)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
                 exchange_vars = algorithm.get("exchange_vars", None)
 
             # Create a separate object for each enabled exchange for this algorithm
-            jobs.append(algorithm_class(exchange_class(exchange_vars), algorithm["index"], algorithm_vars))
+            jobs.append(algorithm_class(exchange_class(exchange_vars), algorithm["id"], algorithm_vars))
 
     logger.info(f"Starting main loop with {len(jobs)} jobs and {action_interval} seconds between actions")
     while True:
@@ -101,14 +102,14 @@ if __name__ == '__main__':
 
             for future in as_completed(futures):
                 algorithm = futures[future]
-                log_action(future.result(),algorithm.exchange.codename, algorithm.codename)
+                log_action(future.result(), algorithm.exchange.codename, algorithm.codename)
 
                 exchange_exists = False
                 for exchange in state_vars["exchanges"]:
                     if algorithm.exchange.codename == exchange:
                         exchange_exists = True
                         state_vars["exchanges"][exchange]["algorithms"].append({
-                            "index": algorithm.index_in_list,
+                            "id": algorithm.id_in_list,
                             "codename": algorithm.codename,
                             "algorithm_vars": algorithm.get_current_vars(),
                             "exchange_vars": algorithm.exchange.get_current_vars()
@@ -117,7 +118,7 @@ if __name__ == '__main__':
                 if not exchange_exists:
                     state_vars["exchanges"][algorithm.exchange.codename] = {
                         "algorithms": [{
-                            "index": algorithm.index_in_list,
+                            "id": algorithm.id_in_list,
                             "codename": algorithm.codename,
                             "algorithm_vars": algorithm.get_current_vars(),
                             "exchange_vars": algorithm.exchange.get_current_vars()

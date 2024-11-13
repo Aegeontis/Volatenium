@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from lib.logger import logger
 
 
-def generate_graph(algorithm_name: str, exchange_name: str, crypto_codename: str):
+def generate_graph(algorithm_name: str, exchange_name: str, algo_id: str):
     # Prepare data for plotting
     with open("cache/history.json", "r") as f:
         data = json.load(f)[exchange_name][algorithm_name]
@@ -16,11 +16,11 @@ def generate_graph(algorithm_name: str, exchange_name: str, crypto_codename: str
         logger.error(f"No data found for {algorithm_name} on {exchange_name}.")
         return
 
-    # Only use data from one crypto_codename
-    filtered_data = [item for item in data if item["crypto_codename"] == crypto_codename]
+    # Only use data from one id
+    filtered_data = [item for item in data if item["id"] == algo_id]
 
     if not filtered_data:
-        logger.error(f"No data found for {exchange_name} on {algorithm_name} with crypto_codename {crypto_codename}.")
+        logger.error(f"No data found for {exchange_name} on {algorithm_name} with id: {algo_id}.")
         return
 
     # Convert UNIX timestamps to datetime and then to matplotlib date format
