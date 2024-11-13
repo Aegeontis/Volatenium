@@ -39,7 +39,7 @@ if __name__ == '__main__':
         logger.info(f"action_interval set to {action_interval} seconds")
 
     logger.info("Reading cached variables")
-    cached_vars = read_variables()
+    cached_vars = read_state()
 
     logger.info("Initiating algorithms")
     jobs = []
@@ -126,7 +126,7 @@ if __name__ == '__main__':
                     }
 
         # store variables
-        store_variables(state_vars)
+        store_state(state_vars)
 
         # wait until the next minute
         wait_time = action_interval - time.localtime().tm_sec

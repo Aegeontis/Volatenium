@@ -80,20 +80,20 @@ def store_settings(settings: dict):
         yaml.safe_dump(settings, f, indent=2)
 
 
-def store_variables(variables: dict):
+def store_state(variables: dict):
     if not os.path.exists("cache"):
         os.makedirs("cache")
-    with open("cache/variables.yaml", "w") as f:
+    with open("cache/state.yaml", "w") as f:
         yaml.safe_dump(variables, f, indent=2)
         # immediately write to disk
         f.flush()
         os.fsync(f.fileno())
 
 
-def read_variables() -> dict:
+def read_state() -> dict:
     cached_vars = {}
-    if os.path.exists("cache/variables.yaml"):
-        with open("cache/variables.yaml", "r") as f:
+    if os.path.exists("cache/state.yaml"):
+        with open("cache/state.yaml", "r") as f:
             cached_vars = yaml.safe_load(f)
     return cached_vars
 
